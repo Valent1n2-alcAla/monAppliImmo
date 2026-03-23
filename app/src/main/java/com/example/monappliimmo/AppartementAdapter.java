@@ -29,29 +29,43 @@ public class AppartementAdapter extends RecyclerView.Adapter<AppartementAdapter.
     public void onBindViewHolder(@NonNull AppartementViewHolder holder, int position) {
         Appartement appartement = listeAppartements.get(position);
 
-        // Affichage simple dans la liste
+        // Affichage dans la liste principale
         holder.tvNumero.setText("Appartement n°" + appartement.getNumero());
         holder.tvDescription.setText(appartement.getDescription());
         holder.tvSurface.setText(appartement.getSurface() + " m² - " + appartement.getNombrePieces() + " pièces");
 
-        // Clic pour aller vers le détail
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), DetailActivity.class);
 
-            // 1. Données de base
+            // 1. Données de l'objet Appartement
             intent.putExtra("ID", appartement.getId());
             intent.putExtra("NUMERO", String.valueOf(appartement.getNumero()));
             intent.putExtra("DESC", appartement.getDescription());
             intent.putExtra("SURFACE", appartement.getSurface());
             intent.putExtra("PIECES", appartement.getNombrePieces());
 
-            // 2. NOUVELLES DONNÉES (Prix et Proprio)
-            intent.putExtra("PRIX", appartement.getPrix());
-            intent.putExtra("PROPRIO", appartement.getProprietaire());
+            // 2. RÉCUPÉRATION DU LOYER ET DU LOCATAIRE (Via le Contrat)
+            // Dans ton SQL, ces infos sont dans la table 'contrat'
+            if (appartement.getContrats() != null && !appartement.getContrats().isEmpty()) {
+                // On récupère le premier contrat (le plus récent)
+                Contrat contratActuel = appartement.getContrats().get(0);
+
+                double totalLoyer = contratActuel.getMontantBrut() + contratActuel.getMontantCharge();
+                intent.putExtra("PRIX", totalLoyer);
+
+                if (contratActuel.getLocataire() != null) {
+                    String nomComplet = contratActuel.getLocataire().getPrenom() + " " + contratActuel.getLocataire().getNom();
+                    intent.putExtra("PROPRIO", nomComplet); // Ici on affiche le locataire actuel
+                }
+            } else {
+                intent.putExtra("PRIX", 0.0);
+                intent.putExtra("PROPRIO", "Logement vacant");
+            }
 
             // 3. RÉCUPÉRATION DE L'ADRESSE (Via la jointure Batiment)
             if (appartement.getBatiment() != null) {
-                intent.putExtra("ADRESSE", appartement.getBatiment().getAdresse());
+                String adresseComplete = appartement.getBatiment().getAdresse() + ", " + appartement.getBatiment().getVille();
+                intent.putExtra("ADRESSE", adresseComplete);
             } else {
                 intent.putExtra("ADRESSE", "Adresse non renseignée");
             }
@@ -62,7 +76,7 @@ public class AppartementAdapter extends RecyclerView.Adapter<AppartementAdapter.
 
     @Override
     public int getItemCount() {
-        return listeAppartements.size();
+        return (listeAppartements != null) ? listeAppartements.size() : 0;
     }
 
     public static class AppartementViewHolder extends RecyclerView.ViewHolder {
