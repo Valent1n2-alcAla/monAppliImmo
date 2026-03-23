@@ -3,20 +3,23 @@ package com.example.monappliimmo;
 import java.io.Serializable;
 
 public class Intervention implements Serializable {
-    private long id;
+    private Long id;
     private String type;
     private String description;
     private String datePrevue;
-    private String dateRealise;
+    // Ici, on déclare l'objet Appartement car ton JSON contient un bloc "appartement": {...}
+    private Appartement appartement;
 
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    // Getters
+    public Long getId() { return id; }
     public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
     public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
     public String getDatePrevue() { return datePrevue; }
+    public Appartement getAppartement() { return appartement; }
+
+    // Setters (Optionnels pour Retrofit mais conseillés)
+    public void setType(String type) { this.type = type; }
+    public void setDescription(String description) { this.description = description; }
     public void setDatePrevue(String datePrevue) { this.datePrevue = datePrevue; }
-    public String getDateRealise() { return dateRealise; }
-    public void setDateRealise(String dateRealise) { this.dateRealise = dateRealise; }
+    public void setAppartement(Appartement appartement) { this.appartement = appartement; }
 }

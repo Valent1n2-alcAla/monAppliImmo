@@ -1,5 +1,6 @@
 package com.example.monappliimmo;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +22,13 @@ public class InterventionAdapter extends RecyclerView.Adapter<InterventionAdapte
         this.interventions = interventions;
     }
 
-    /**
-     * Convertit une date du format "yyyy-MM-dd" vers "dd/MM/yyyy"
-     */
     private String formatteDateEurope(String dateBrute) {
         try {
-            // 1. On définit le format source (celui de la base de données/API)
             SimpleDateFormat sdfSource = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            // 2. On définit le format de destination (Européen)
             SimpleDateFormat sdfDestination = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-
-            // 3. On fait la conversion
             Date date = sdfSource.parse(dateBrute);
             return sdfDestination.format(date);
         } catch (ParseException e) {
-            // Si le format reçu n'est pas celui attendu, on renvoie la chaîne brute pour ne pas perdre l'info
             return dateBrute;
         }
     }
@@ -54,14 +47,23 @@ public class InterventionAdapter extends RecyclerView.Adapter<InterventionAdapte
         holder.tvType.setText(inter.getType());
         holder.tvDesc.setText(inter.getDescription());
 
-        // Affichage de la date au format européen
+        // Formatage de la date pour l'affichage dans la liste
         if (inter.getDatePrevue() != null && !inter.getDatePrevue().isEmpty()) {
-            // ON APPELLE LE FORMATTAGE ICI
-            String dateEuropeenne = formatteDateEurope(inter.getDatePrevue());
-            holder.tvDate.setText(dateEuropeenne);
+            holder.tvDate.setText(formatteDateEurope(inter.getDatePrevue()));
         } else {
             holder.tvDate.setText("En attente");
         }
+
+        // --- GESTION DU CLIC POUR LES DÉTAILS ---
+        holder.itemView.setOnClickListener(v -> {
+            // On crée l'intention de passer à l'écran de détail
+            Intent intent = new Intent(v.getContext(), InterventionDetailActivity.class);
+
+            // On passe l'objet complet (Assure-toi que ta classe Intervention implémente Serializable !)
+            intent.putExtra("intervention_selectionnee", inter);
+
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override
