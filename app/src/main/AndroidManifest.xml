@@ -37,6 +37,17 @@
         </activity>
 
         <activity
+            android:name=".InterventionDetailActivity"
+            android:exported="false"
+            android:label="Détail intervention"
+            android:parentActivityName=".MainActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
