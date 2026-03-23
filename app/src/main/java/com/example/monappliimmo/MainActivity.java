@@ -19,17 +19,31 @@ public class MainActivity extends AppCompatActivity {
     private void setupNavigation() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
-        // Écran par défaut (Home)
+        // Écran par défaut au lancement
         chargerFragment(new HomeFragment());
 
-        // Gestion des clics
+        // Gestion des clics sur la Navbar
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
+
             if (id == R.id.nav_appartements) {
                 return chargerFragment(new HomeFragment());
-            } else if (id == R.id.nav_batiments) {
-                // return chargerFragment(new BatimentFragment());
             }
+            else if (id == R.id.nav_batiments) {
+                return chargerFragment(new BatimentFragment());
+            }
+            // --- AJOUT ICI POUR LES INTERVENTIONS ---
+            else if (id == R.id.nav_interventions) {
+                // Vérifie bien que l'ID dans ton fichier res/menu/bottom_nav_menu.xml
+                // est bien "nav_interventions"
+                return chargerFragment(new InterventionFragment());
+            }
+            // ----------------------------------------
+            /* else if (id == R.id.nav_locataires) {
+                return chargerFragment(new LocataireFragment());
+            }
+            */
+
             return false;
         });
     }

@@ -42,7 +42,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Appartement>> call, Response<List<Appartement>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    adapter = new AppartementAdapter(response.body());
+                    adapter = new AppartementAdapter(response.body(), null);
                     recyclerView.setAdapter(adapter);
                 }
             }

@@ -11,4 +11,7 @@ public interface ApiService {
 
     @GET("api/batiments")
     Call<List<Batiment>> getBatiments();
+
+    @GET("api/interventions")
+    Call<List<Intervention>> getInterventions();
 }

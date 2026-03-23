@@ -11,6 +11,7 @@ public class Appartement implements Serializable {
     private int nombrePieces;
     private Batiment batiment;
     private List<Contrat> contrats;
+
     private List<Intervention> interventions;
 
     public long getId() { return id; }
