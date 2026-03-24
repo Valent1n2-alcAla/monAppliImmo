@@ -5,7 +5,7 @@ import retrofit2.http.GET
 
 interface ApiService {
 
-    @GET("api/appartements")
+    @GET("api/appartements/")
     fun getAppartements(): Call<List<Appartement>>
 
     @GET("api/batiments")
