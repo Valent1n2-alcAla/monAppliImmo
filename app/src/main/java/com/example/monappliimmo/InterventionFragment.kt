@@ -15,7 +15,7 @@ import retrofit2.Response
 
 class InterventionFragment : Fragment() {
 
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
     private var adapter: InterventionAdapter? = null
 
     override fun onCreateView(
@@ -26,7 +26,7 @@ class InterventionFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_intervention, container, false)
 
         recyclerView = view.findViewById(R.id.rvToutesInterventions)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         chargerInterventions()
 
@@ -35,7 +35,7 @@ class InterventionFragment : Fragment() {
 
     private fun chargerInterventions() {
         RetrofitClient.getInstance()
-            .getApi()
+            .api
             .getInterventions()
             .enqueue(object : Callback<List<Intervention>> {
 
@@ -45,21 +45,20 @@ class InterventionFragment : Fragment() {
                 ) {
                     if (response.isSuccessful) {
                         response.body()?.let { interventions ->
-
                             adapter = InterventionAdapter(interventions)
-                            recyclerView?.adapter = adapter
+                            recyclerView.adapter = adapter
 
                             Log.d("API_SUCCESS", "Interventions reçues : ${interventions.size}")
                         }
                     } else {
                         Log.e("API_ERROR", "Erreur : ${response.code()}")
-                        Toast.makeText(context, "Erreur serveur ${response.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Erreur serveur ${response.code()}", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onFailure(call: Call<List<Intervention>>, t: Throwable) {
                     Log.e("API_FAILURE", "Erreur réseau : ${t.message}")
-                    Toast.makeText(context, "Connexion échouée au port 9005", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Connexion échouée au port 9005", Toast.LENGTH_SHORT).show()
                 }
             })
     }

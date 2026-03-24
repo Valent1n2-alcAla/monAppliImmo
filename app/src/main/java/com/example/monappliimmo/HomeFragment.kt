@@ -1,6 +1,7 @@
 package com.example.monappliimmo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,18 +14,21 @@ import retrofit2.Response
 
 class HomeFragment : Fragment() {
 
-    private var recyclerView: RecyclerView? = null
+    // On utilise lateinit car on sait qu'on va l'initialiser dans onCreateView
+    private lateinit var recyclerView: RecyclerView
     private var adapter: AppartementAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+        // Chargement du layout
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        // Initialisation de la vue
         recyclerView = view.findViewById(R.id.recyclerViewHome)
-        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         chargerAppartements()
 
@@ -33,7 +37,7 @@ class HomeFragment : Fragment() {
 
     private fun chargerAppartements() {
         RetrofitClient.getInstance()
-            .getApi()
+            .api // En Kotlin, on accède souvent aux getters comme des propriétés
             .getAppartements()
             .enqueue(object : Callback<List<Appartement>> {
 
@@ -42,15 +46,16 @@ class HomeFragment : Fragment() {
                     response: Response<List<Appartement>>
                 ) {
                     if (response.isSuccessful) {
-                        response.body()?.let { appartements ->
-                            adapter = AppartementAdapter(appartements)
-                            recyclerView?.adapter = adapter
+                        response.body()?.let { listAppart ->
+                            // Mise à jour de l'UI
+                            adapter = AppartementAdapter(listAppart)
+                            recyclerView.adapter = adapter
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<List<Appartement>>, t: Throwable) {
-                    // Tu peux log ici si besoin
+                    Log.e("HomeFragment", "Erreur API : ${t.message}")
                 }
             })
     }

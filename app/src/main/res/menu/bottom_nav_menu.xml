@@ -4,14 +4,17 @@
         android:id="@+id/nav_appartements"
         android:icon="@android:drawable/ic_menu_today"
         android:title="Apparts" />
+
     <item
         android:id="@+id/nav_batiments"
         android:icon="@android:drawable/ic_menu_directions"
         android:title="Bâtiments" />
+
     <item
         android:id="@+id/nav_interventions"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="Interventions" />
+
     <item
         android:id="@+id/nav_compte"
         android:icon="@android:drawable/ic_menu_myplaces"
