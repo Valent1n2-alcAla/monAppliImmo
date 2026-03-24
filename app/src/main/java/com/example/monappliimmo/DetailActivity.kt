@@ -9,63 +9,54 @@ import com.google.android.material.chip.Chip
 import java.util.Locale
 
 class DetailActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        // 1. Configuration de la Toolbar (Flèche de retour)
-        val toolbar = findViewById<Toolbar?>(R.id.detailToolbar)
+        // 1. Setup de la Toolbar (importante pour la flèche de retour)
+        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
         setSupportActionBar(toolbar)
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar()!!.setDisplayHomeAsUpEnabled(true)
-            getSupportActionBar()!!.setDisplayShowTitleEnabled(false)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowTitleEnabled(false) // On cache le titre pour laisser place au design
         }
 
-        // 2. Initialisation de TOUTES les vues (doivent être dans activity_detail.xml)
+        // 2. Initialisation des composants (ID vérifiés selon ton XML)
         val tvTitre = findViewById<TextView>(R.id.detailTitre)
-        val tvAdresse = findViewById<TextView>(R.id.detailAdresse) // Ajouté
-        val tvPrix = findViewById<TextView>(R.id.detailPrix) // Ajouté
+        val tvAdresse = findViewById<TextView>(R.id.detailAdresse)
+        val tvPrix = findViewById<TextView>(R.id.detailPrix)
         val tvDesc = findViewById<TextView>(R.id.detailDescription)
-        val tvProprio = findViewById<TextView>(R.id.detailProprietaire) // Ajouté
+        val tvProprio = findViewById<TextView>(R.id.detailProprietaire)
 
         val chipSurface = findViewById<Chip>(R.id.chipSurface)
         val chipPieces = findViewById<Chip>(R.id.chipPieces)
 
-        // 3. Récupération des données envoyées par l'Adapter
-        val numero = getIntent().getStringExtra("NUMERO")
-        val desc = getIntent().getStringExtra("DESC")
-        val surface = getIntent().getDoubleExtra("SURFACE", 0.0)
-        val pieces = getIntent().getIntExtra("PIECES", 0)
+        // 3. Récupération des données passées par l'Intent
+        val numero = intent.getStringExtra("NUMERO") ?: "N/A"
+        val desc = intent.getStringExtra("DESC") ?: "Aucune description disponible."
+        val surface = intent.getDoubleExtra("SURFACE", 0.0)
+        val pieces = intent.getIntExtra("PIECES", 0)
+        val prix = intent.getDoubleExtra("PRIX", 0.0)
+        val adresse = intent.getStringExtra("ADRESSE") ?: "Adresse non renseignée"
+        val proprio = intent.getStringExtra("PROPRIO") ?: "N/A"
 
-        // Nouvelles données
-        val prix = getIntent().getDoubleExtra("PRIX", 0.0)
-        val adresse = getIntent().getStringExtra("ADRESSE")
-        val proprio = getIntent().getStringExtra("PROPRIO")
+        // 4. Injection des données dans les vues
+        tvTitre.text = "Appartement $numero"
+        tvAdresse.text = adresse
+        tvPrix.text = String.format(Locale.FRANCE, "%,.0f €", prix)
+        tvDesc.text = desc
+        tvProprio.text = "Locataire : $proprio"
 
-        // 4. Affichage dynamique des données
-        tvTitre.setText("Appartement " + (if (numero != null) numero else "N/A"))
-        tvAdresse.setText(if (adresse != null) adresse else "Adresse non renseignée")
-
-        // Formatage du prix (ex: 250 000 €)
-        tvPrix.setText(String.format(Locale.FRANCE, "%,.0f €", prix))
-
-        if (desc != null && !desc.isEmpty()) {
-            tvDesc.setText(desc)
-        } else {
-            tvDesc.setText("Aucune description disponible pour ce bien.")
-        }
-
-        tvProprio.setText("Propriétaire : " + (if (proprio != null) proprio else "N/A"))
-
-        // Remplissage des Chips
-        chipSurface.setText(surface.toString() + " m²")
-        chipPieces.setText(pieces.toString() + " pièces")
+        chipSurface.text = "$surface m²"
+        chipPieces.text = "$pieces pièces"
     }
 
+    // Gestion de la flèche de retour
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() == android.R.id.home) {
-            finish() // Ferme l'activité et revient à la liste
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed() // Utilise la nouvelle méthode recommandée
             return true
         }
         return super.onOptionsItemSelected(item)

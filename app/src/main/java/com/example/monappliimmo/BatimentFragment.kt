@@ -14,7 +14,7 @@ import retrofit2.Response
 
 class BatimentFragment : Fragment() {
 
-    private var rvBatiments: RecyclerView? = null
+    private lateinit var rvBatiments: RecyclerView
     private var adapter: BatimentAdapter? = null
 
     override fun onCreateView(
@@ -25,7 +25,7 @@ class BatimentFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_batiment, container, false)
 
         rvBatiments = view.findViewById(R.id.rvBatiments)
-        rvBatiments?.layoutManager = LinearLayoutManager(context)
+        rvBatiments.layoutManager = LinearLayoutManager(requireContext())
 
         chargerBatiments()
 
@@ -34,7 +34,7 @@ class BatimentFragment : Fragment() {
 
     private fun chargerBatiments() {
         RetrofitClient.getInstance()
-            .getApi()
+            .api
             .getBatiments()
             .enqueue(object : Callback<List<Batiment>> {
 
@@ -45,14 +45,14 @@ class BatimentFragment : Fragment() {
                     if (response.isSuccessful) {
                         response.body()?.let { batiments ->
                             adapter = BatimentAdapter(batiments)
-                            rvBatiments?.adapter = adapter
+                            rvBatiments.adapter = adapter
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<List<Batiment>>, t: Throwable) {
                     Toast.makeText(
-                        context,
+                        requireContext(),
                         "Erreur lors du chargement des bâtiments",
                         Toast.LENGTH_SHORT
                     ).show()

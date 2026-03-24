@@ -1,11 +1,11 @@
 package com.example.monappliimmo
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigation() {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Écran par défaut
+        // Écran par défaut (Liste des appartements)
         chargerFragment(HomeFragment())
 
         bottomNav.setOnItemSelectedListener { item: MenuItem ->
@@ -38,6 +38,15 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_interventions -> {
                     chargerFragment(InterventionFragment())
                     true
+                }
+
+                // Clic sur l'onglet "Compte" pour ouvrir ton superbe écran de login
+                R.id.nav_compte -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    // On retourne false pour ne pas changer d'onglet visuellement
+                    // car on change carrément de page (Activity)
+                    false
                 }
 
                 else -> false
