@@ -12,7 +12,6 @@ class AppartementAdapter(
     private val batimentParent: Batiment? = null
 ) : RecyclerView.Adapter<AppartementAdapter.AppartementViewHolder>() {
 
-    // Constructeur alternatif (si besoin)
     constructor(listeAppartements: List<Appartement>?) : this(listeAppartements, null)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppartementViewHolder {
@@ -24,7 +23,6 @@ class AppartementAdapter(
     override fun onBindViewHolder(holder: AppartementViewHolder, position: Int) {
         val appartement = listeAppartements?.get(position) ?: return
 
-        // AFFICHAGE DES INFOS DE BASE
         holder.tvNumero.text = "Appartement n°${appartement.numero}"
         holder.tvDescription.text = appartement.description
         holder.tvSurface.text = "${appartement.surface} m² - ${appartement.nombrePieces} pièces"
@@ -33,47 +31,41 @@ class AppartementAdapter(
             val context = v.context
             val intent = Intent(context, DetailActivity::class.java)
 
-            // Données appartement
             intent.putExtra("ID", appartement.id)
             intent.putExtra("NUMERO", appartement.numero.toString())
             intent.putExtra("DESC", appartement.description)
             intent.putExtra("SURFACE", appartement.surface)
             intent.putExtra("PIECES", appartement.nombrePieces)
 
-            // Logique pour l'adresse (Capture de batiment pour le Smart Cast)
             val batLocal = appartement.batiment
             val adresseComplete = when {
-                batimentParent != null ->
-                    "${batimentParent.adresse}, ${batimentParent.ville}"
-
-                batLocal != null ->
-                    "${batLocal.adresse}, ${batLocal.ville}"
-
+                batimentParent != null -> "${batimentParent.adresse}, ${batimentParent.ville}"
+                batLocal != null -> "${batLocal.adresse}, ${batLocal.ville}"
                 else -> "Adresse non renseignée"
             }
-
             intent.putExtra("ADRESSE", adresseComplete)
 
-            // Gestion du contrat et du locataire (Fix Smart Cast Error)
             val contratActuel = appartement.contrats?.firstOrNull()
 
             if (contratActuel != null) {
-                // On calcule le prix total
                 val totalLoyer = contratActuel.montantBrut + contratActuel.montantCharge
                 intent.putExtra("PRIX", totalLoyer)
 
-                // Capture du locataire dans une variable locale 'val' pour permettre le Smart Cast
                 val loc = contratActuel.locataire
                 if (loc != null) {
                     val nomComplet = "${loc.prenom} ${loc.nom}"
                     intent.putExtra("PROPRIO", nomComplet)
+                    intent.putExtra("LOCATAIRE_ID", loc.id)
+                    intent.putExtra("LOCATAIRE_EMAIL", loc.mail)
                 } else {
                     intent.putExtra("PROPRIO", "Locataire non renseigné")
+                    intent.putExtra("LOCATAIRE_ID", -1L)
                 }
             } else {
-                // Cas d'un logement vacant
                 intent.putExtra("PRIX", 0.0)
                 intent.putExtra("PROPRIO", "Logement vacant")
+                intent.putExtra("LOCATAIRE_ID", -1L)
+
             }
 
             context.startActivity(intent)

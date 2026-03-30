@@ -60,6 +60,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LocataireDetailActivity"
+            android:exported="false"
+            android:label="Fiche Locataire"
+            android:parentActivityName=".DetailActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DetailActivity" />
+        </activity>
+
     </application>
 
 </manifest>

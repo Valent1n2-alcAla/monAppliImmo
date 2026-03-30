@@ -2,6 +2,7 @@ package com.example.monappliimmo
 
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -13,4 +14,10 @@ interface ApiService {
 
     @GET("api/interventions")
     fun getInterventions(): Call<List<Intervention>>
+
+    @GET("api/loyers/appartement/{id}")
+    suspend fun getLoyersByAppartement(@Path("id") id: Long): List<Loyer>
+
+    @GET("api/loyers/locataire/{id}")
+    suspend fun getLoyersByLocataire(@Path("id") id: Long): List<Loyer>
 }
